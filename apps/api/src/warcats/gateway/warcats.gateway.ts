@@ -52,7 +52,7 @@ export class WarCatsGateway
   implements OnGatewayConnection<Socket>, OnGatewayInit<Server>
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   constructor(
     @Inject('REDIS')

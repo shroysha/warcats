@@ -16,7 +16,7 @@ import {WarCatsGameService} from '../warcats/service/warcats.game.service';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env', '.env.local'],
+      envFilePath: ['.env.local', '.env'],
     }),
     ThrottlerModule.forRoot({limit: 1000, ttl: 69}),
     MongooseModule.forRoot(

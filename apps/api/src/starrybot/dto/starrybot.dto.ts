@@ -1,15 +1,15 @@
 export class StarryBackendDto {
-  traveller: string;
+  traveller!: string;
 }
 
 export class KeplrSignedDto {
-  traveller: string;
-  signed: string;
-  signature: string;
-  account: string;
+  traveller!: string;
+  signed!: string;
+  signature!: string;
+  account!: string;
 }
 
 export class TokenRuleInfo {
-  discordUserId: string;
-  guildId: string;
+  discordUserId!: string;
+  guildId!: string;
 }
