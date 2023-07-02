@@ -9,7 +9,7 @@ export interface IRedisProvider {
 export const makeRedisProvider = (key: string) => {
   return {
     useFactory: async () => {
-      const pub = createClient({ url: process.env.REDIS_URL });
+      const pub = createClient({ url: process.env.REDIS_URL, username: process.env.REDIS_USERNAME, password: process.env.REDIS_PASSWORD });
       const sub = pub.duplicate();
 
       await Promise.all([pub.connect(), sub.connect()]);
