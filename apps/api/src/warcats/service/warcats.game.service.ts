@@ -139,8 +139,11 @@ export class WarCatsGameService {
       const timeSinceMove = new Date().getTime() - game.lastMoveTime;
       const victory = timeSinceMove > victoryTimeout;
       if (victory) {
-        game.gameOver = true;
-        await game.save();
+        await this.gameModel.updateOne({
+          _id: game._id, 
+        }, {
+          gameOver: true
+        })
         console.log("wrote game over from declare victory")
       }
 
