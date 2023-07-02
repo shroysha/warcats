@@ -142,7 +142,9 @@ export class WarCatsGameService {
         const updatedGame = await this.gameModel.updateOne({
           _id: game._id, 
         }, {
-          gameOver: true
+          $set: {
+            gameOver: true
+          }
         })
         console.log("wrote game over from declare victory", game._id, updatedGame)
       }
