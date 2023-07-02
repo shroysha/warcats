@@ -101,6 +101,7 @@ export class WarCatsGateway
       warcatTokenId,
     );
     if (maybeGame != null) {
+      console.log("returning cached game", game._id)
       return {event: 'found_game', data: maybeGame};
     }
 

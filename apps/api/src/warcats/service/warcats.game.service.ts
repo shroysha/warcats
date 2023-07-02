@@ -141,6 +141,7 @@ export class WarCatsGameService {
       if (victory) {
         game.gameOver = true;
         await game.save();
+        console.log("wrote game over from declare victory")
       }
 
       const winningWallet = victory ? wallet : null;
