@@ -14,10 +14,8 @@ export class StarrybotController {
     @Res({passthrough: true}) res: Response,
   ) {
     const {
-      db,
       logic,
       logger,
-      discord,
       // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('../../../lib/starrybot/server');
 
@@ -40,7 +38,6 @@ export class StarrybotController {
     @Res({passthrough: true}) res: Response,
   ) {
     const {
-      db,
       logic,
       logger,
       discord,

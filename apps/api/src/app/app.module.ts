@@ -11,6 +11,7 @@ import {ThrottlerModule} from '@nestjs/throttler';
 import {throwErr} from '../helpers/throwErr';
 import {gameSchema} from '../warcats/schema/game.schema';
 import {WarCatsGameService} from '../warcats/service/warcats.game.service';
+import { AppController } from './controller/app.controller';
 
 @Module({
   imports: [
@@ -30,12 +31,13 @@ import {WarCatsGameService} from '../warcats/service/warcats.game.service';
       },
     ]),
   ],
-  controllers: [StarrybotController, WarCatsController],
+  controllers: [AppController, StarrybotController, WarCatsController],
   providers: [
     makeRedisProvider('REDIS'),
     WarCatsMatchingService,
     WarCatsGameService,
     WarCatsGateway,
+  
   ],
 })
 export class AppModule {}
