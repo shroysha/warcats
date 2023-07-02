@@ -139,12 +139,12 @@ export class WarCatsGameService {
       const timeSinceMove = new Date().getTime() - game.lastMoveTime;
       const victory = timeSinceMove > victoryTimeout;
       if (victory) {
-        await this.gameModel.updateOne({
+        const updatedGame = await this.gameModel.updateOne({
           _id: game._id, 
         }, {
           gameOver: true
         })
-        console.log("wrote game over from declare victory")
+        console.log("wrote game over from declare victory", game._id, updatedGame)
       }
 
       const winningWallet = victory ? wallet : null;
