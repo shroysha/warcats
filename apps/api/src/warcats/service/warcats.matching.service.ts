@@ -8,11 +8,10 @@ import {
   UnitTeam,
   BuildingPath,
   MapPosition,
-  Unit,
   IGame,
-  IPlayer,
   IUnit,
 } from '@warcats/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 export const startingGold = 1000;
 
@@ -39,11 +38,27 @@ export const makeUnit = (path: UnitPath, pos: number[], didMove: boolean) => {
 
 @Injectable()
 export class WarCatsMatchingService {
+  private running = false;
+
   constructor(
     @Inject('REDIS')
     private readonly redis: IRedisProvider,
     @InjectModel('Game') private gameModel: Model<IGame>,
   ) {}
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  async handleCron() {
+    if(!this.running) {
+      this.running = true;
+      try {
+        console.log("called every 30 seconds")
+      } catch(e) {
+        console.error(e);
+      } finally {
+        this.running = false;
+      }
+    }
+  }
 
   // async addToMatchmaking(
   //   socket: Socket,
@@ -126,11 +141,89 @@ export class WarCatsMatchingService {
   //   return game;
   // }
 
+  // async addToMatchmaking(
+  //   socket: Socket,
+  //   wallet: string,
+  //   warcatTokenId: number,
+  // ) {
+  //   // eslint-disable-next-line no-async-promise-executor
+  //   const game = await new Promise<IGame>(async (resolve) => {
+  //     this.redis.sub.on('confirm_game', async (warcat1, warcat2, gameId) => {
+  //       if (warcatTokenId == warcat1 || warcatTokenId == warcat2) {
+  //         console.log('confirming', wallet, warcat1, warcat2, gameId);
+  //         const game = await this.gameModel.findById(gameId);
+  //         if (game == null) {
+  //           throw new Error('Bad game');
+  //         }
+  //         resolve(game);
+  //       }
+  //     });
+
+  //     this.redis.sub.on('found_game', async (warcat1, warcat2) => {
+  //       if (warcat1 == warcatTokenId) {
+  //         console.log('confirming game', {warcat1, warcat2});
+  //         const ourWallet = await this.redis.sub.get(warcat1);
+  //         const theirWallet = await this.redis.sub.get(warcat2);
+  //         if (ourWallet == null || theirWallet == null) {
+  //           throw new Error('Something with redis messed up');
+  //         }
+
+  //         const game = await this.createGame(
+  //           ourWallet,
+  //           theirWallet,
+  //           warcat1,
+  //           warcat2,
+  //         );
+  //         await this.redis.pub.del(warcat1);
+  //         await this.redis.pub.del(warcat2);
+  //         await this.redis.pub.sRem('search', warcat1);
+  //         await this.redis.pub.sRem('search', warcat2);
+
+  //         await this.redis.pub.lRem('match_queue', 1, warcat1);
+  //         await this.redis.pub.lRem('match_queue', 1, warcat2);
+
+  //         this.redis.sub.emit('confirm_game', warcat1, warcat2, game._id);
+  //         this.redis.sub.emit('new_candidate');
+  //       }
+  //     });
+
+  //     this.redis.sub.on('new_candidate', async () => {
+  //       const warcat1 = (await this.redis.sub.lRange('match_queue', 0, 1))[0];
+  //       if (warcat1 == `${warcatTokenId}`) {
+  //         const warcat2 = (await this.redis.sub.lRange('match_queue', 1, 2))[0];
+  //         if (warcat2 == null) {
+  //           return;
+  //         }
+  //         const foundGameKey = `found_game_${warcatTokenId}`;
+  //         const lt = await this.redis.pub.setNX(foundGameKey, '0');
+  //         await this.redis.pub.expire(foundGameKey, 10);
+  //         if (lt) {
+  //           this.redis.sub.emit('found_game', warcat1, warcat2);
+  //         }
+  //       }
+  //     });
+
+  //     const setResult = await this.redis.pub.sAdd('search', `${warcatTokenId}`);
+  //     if (setResult == 1) {
+  //       console.log('emitted to queue', new Date().toString());
+  //       const result = await this.redis.pub.set(`${warcatTokenId}`, wallet);
+  //       await this.redis.pub.rPush('match_queue', `${warcatTokenId}`);
+  //       this.redis.sub.emit('new_candidate');
+  //     }
+  //   });
+
+  //   console.log('got game id', game);
+
+  //   this.redis.sub.emit('new_candidate');
+  //   return game;
+  // }
+
   async addToMatchmaking(
     socket: Socket,
     wallet: string,
     warcatTokenId: number,
   ) {
+    // eslint-disable-next-line no-async-promise-executor
     const game = await new Promise<IGame>(async (resolve) => {
       this.redis.sub.on('confirm_game', async (warcat1, warcat2, gameId) => {
         if (warcatTokenId == warcat1 || warcatTokenId == warcat2) {

@@ -12,9 +12,11 @@ import {throwErr} from '../helpers/throwErr';
 import {gameSchema} from '../warcats/schema/game.schema';
 import {WarCatsGameService} from '../warcats/service/warcats.game.service';
 import { AppController } from './controller/app.controller';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
